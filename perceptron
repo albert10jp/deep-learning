@@ -1,0 +1,38 @@
+import numpy as np
+import copy
+
+nearest_setosa = np.array([[1.9, 0.4],[1.7, 0.5]])
+nearest_versicolour = np.array([[3. , 1.1]])
+x_train = np.concatenate((nearest_setosa, nearest_versicolour), axis=0)
+y_train = [-1, -1, 1]
+
+def predict(x):
+    if np.dot(model_w, x) + model_b >= 0:
+        return 1
+    else:
+        return -1
+
+def update_weights(idx, verbose=False):
+    global model_w, model_b, eta
+    model_w += eta * y_train[idx] * x_train[idx]
+    model_b += eta * y_train[idx]
+    if verbose:
+        print(model_b)
+        print(model_w)
+
+eta_weights = []
+for w in np.arange(-1.0, 1.0, .1):
+    for eta in np.arange(.1, 2.0, .1):
+        model_w = np.asarray([w, w])
+        model_b = 0.0
+        init_w = copy.deepcopy(w)
+        for j in range(99):
+            indicator = 0
+            for i in range(3):
+                if y_train[i] != predict(x_train[i]):
+                    update_weights(i)
+                else:
+                    indicator+=1
+            if indicator>=3:
+                break
+        eta_weights.append([j, eta, init_w, model_w, model_b])
